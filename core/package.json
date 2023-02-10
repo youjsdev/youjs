@@ -1,6 +1,11 @@
 {
   "name": "@youjs/core",
+  "private": false,
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/youjsdev/youjs.git"
+  },
   "description": "You.js core module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,7 +14,7 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
-    "test": "jest --config jestconfig.json",
+    "test": "jest --config jestconfig.json --passWithNoTests",
     "prepublishOnly": "npm test && npm run lint",
     "prepare": "npm run build",
     "preversion": "npm run lint",
