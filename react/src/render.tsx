@@ -1,5 +1,4 @@
-import { createElement } from 'react';
-import React = require('react');
+import { createElement, Fragment, FunctionComponent } from 'react';
 
 export const renderComponent = (
   element: {
@@ -7,7 +6,7 @@ export const renderComponent = (
     children?: [];
   },
   knownElements: {
-    [key: string]: React.FunctionComponent;
+    [key: string]: FunctionComponent;
   },
   key?: any,
 ): any => {
@@ -30,6 +29,6 @@ export const renderComponent = (
           knownElements,
         ).join(', ')}]`,
       ),
-      React.createElement(React.Fragment, { key }, null)
+      createElement(Fragment, { key }, null)
     );
 };
