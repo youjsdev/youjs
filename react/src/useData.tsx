@@ -25,7 +25,7 @@ export const useDataPoint = (point: string) => {
     try {
       point = JSON.parse(point);
     } catch (error) {
-      console.error(error);
+      //   console.error(error);
     }
     const obj =
       typeof point === 'object'
