@@ -117,7 +117,12 @@ export default class Builder extends Project {
   public getStaticProps = async (context: { params: { slug: any } }) => ({
     props: await this.getPage(context.params.slug),
   });
+
+  public revalidate = async (req: any, res: any) => {
+    return this.getProject().then((project) => {
+      return Promise.all(Object.keys(project.pages ?? {}).map(async (slug: string) => res.revalidate(slug)));
+    });
+  };
 }
 
-export * from '@youjs/core';
 export * from '@youjs/react';
