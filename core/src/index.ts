@@ -1,3 +1,5 @@
+import { ProjectData } from './types';
+
 export class Project {
   _clientId: string;
   _apiKey: string;
@@ -17,7 +19,7 @@ export class Project {
     return Buffer.from(`${this._clientId}:${this._apiKey}`).toString('base64');
   }
 
-  async getProject() {
+  async getProject(): Promise<ProjectData> {
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `Bearer ${this._getBearerToken()}`);
 
