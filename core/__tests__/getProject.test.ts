@@ -4,9 +4,10 @@
 
 import { Project } from '../src/index';
 
-const project = new Project('FZO1S28apPcyNDgeydqqFRkzmG03', 'jnLPCkEigI1TmNbRW4a0', 'v1', 'http://localhost:3000/api');
+const project = new Project('FZO1S28apPcyNDgeydqqFRkzmG03', 'jnLPCkEigI1TmNbRW4a0');
 
 test('getProject', async () => {
+  jest.setTimeout(10000);
   const result = await project.getProject();
   expect(result).toHaveProperty('info');
   expect(result).toHaveProperty('pages');

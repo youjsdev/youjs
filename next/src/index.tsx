@@ -2,11 +2,11 @@ import { Project as CoreProject } from '@youjs/core';
 import { Page as PageData, ProjectData } from '@youjs/core/dist/types';
 import { DataProvider, renderComponent } from '@youjs/react';
 import Head from 'next/head';
+import { Component } from 'react';
 import Meta from './Meta';
-import React = require('react');
 
 const Page = (getProject: () => Promise<ProjectData>) => {
-  class Page extends React.Component<
+  class Page extends Component<
     ProjectData & {
       page: PageData;
       wrapper: React.FC<{
