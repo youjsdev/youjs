@@ -118,8 +118,9 @@ export default class Builder extends Project {
   });
 
   public revalidate = async (req: any, res: any) => {
-    return this.getProject().then((project) => {
-      return Promise.all(Object.keys(project.pages ?? {}).map(async (slug: string) => res.revalidate(`/${slug}`)));
+    const project = await this.getProject();
+    Promise.all(Object.keys(project.pages ?? {}).map(async (slug: string) => res.revalidate(`/${slug}`))).then(() => {
+      res.json({ success: true, message: 'Revalidation complete', pages: Object.keys(project.pages ?? {}) });
     });
   };
 }
