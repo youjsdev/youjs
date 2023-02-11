@@ -1,80 +1,126 @@
-import { Project as CoreProject } from '@youjs/core';
-import { Page as PageData, ProjectData } from '@youjs/core/dist/types';
-import { DataProvider, renderComponent } from '@youjs/react';
+import { Project } from '@youjs/core';
+import { Page, ProjectData } from '@youjs/core/dist/types';
+import { renderComponent } from '@youjs/react';
 import Head from 'next/head';
-import { Component } from 'react';
-import Meta from './Meta';
+import { useEffect, useState } from 'react';
 
-const Page = (getProject: () => Promise<ProjectData>) => {
-  class Page extends Component<
-    ProjectData & {
-      page: PageData;
-      wrapper: React.FC<{
-        data: ProjectData;
-        children: React.ReactNode;
-      }>;
-      components: {
-        [key: string]: React.FunctionComponent;
-      };
-    }
-  > {
-    render() {
-      const data = this.props;
+export default class Builder extends Project {
+  private components: {
+    [name: string]: React.FunctionComponent<any>;
+  };
+  private wrapper: React.FunctionComponent<any>;
 
-      return (
-        <DataProvider data={data}>
-          <Head>
-            <title>{`${data.page.name} | ${data.info.name}`}</title>
-            <Meta id={data.info.analytics} url={data.info.url} {...data.page} />
-          </Head>
-          <this.props.wrapper data={data}>
-            {Object.values(data.page.content)
-              .sort((a: any, b: any) => {
-                // sort least to greatest by index
-                return a.index - b.index;
-              })
-              .map((c: any, key: number) => renderComponent(c, this.props.components, key))}
-          </this.props.wrapper>
-        </DataProvider>
-      );
-    }
+  constructor(
+    _clientId: string,
+    _apiKey: string,
+    _wrapper: React.FunctionComponent<any> = ({ children }) => <div>{children}</div>,
+    _components: {
+      [name: string]: React.FunctionComponent<any>;
+    } = {},
+  ) {
+    super(_clientId, _apiKey);
 
-    static async getStaticPaths() {
-      const project = await getProject();
-
-      return {
-        paths: project.pages.map((page) => ({
-          params: {
-            slug: page.slug,
-          },
-        })),
-        fallback: 'blocking',
-      };
-    }
-
-    static async getStaticProps() {
-      const project = await getProject();
-
-      return {
-        props: {} as ProjectData,
-      };
-    }
+    this.components = _components;
+    this.wrapper = _wrapper;
   }
 
-  return Page;
-};
+  public register = (name: string, component: React.FunctionComponent): React.FunctionComponent =>
+    (this.components[name] = component);
 
-export class Project extends CoreProject {
-  constructor(projectId: string, apiKey: string) {
-    super(projectId, apiKey);
-  }
+  public getPage = (slug: string): Promise<ProjectData & { page: Page }> =>
+    this.getProject().then(async (project) => ({
+      ...project,
+      navbar: {
+        ...project.navbar,
+      },
+      page: {
+        ...project.pages[slug],
+      },
+    }));
 
-  async getProject() {
-    const result = await super.getProject();
-    return result;
-  }
+  public getPages = (): Promise<
+    {
+      name: string;
+      slug: string;
+    }[]
+  > =>
+    this.getProject().then((project) =>
+      Object.values(project.pages).map((page: any) => ({
+        name: page.name,
+        slug: page.slug,
+      })),
+    );
 
-  Page() {
-    return Page(this.getProject);
-  }
+  public page = (_data: ProjectData & { page: Page }) => {
+    const [data, setData] = useState(_data);
+    const [content, setContent] = useState<any>();
+
+    useEffect(() => {
+      Promise.all(
+        Object.values(data.page.content)
+          ?.sort((a: any, b: any) => {
+            console.log(a.index, b.index);
+            // sort least to greatest by index
+            return a.index - b.index;
+          })
+          .map(async (element: any, index: number) => await renderComponent(element, this.components, index)),
+      ).then((content) => setContent(content));
+    }, [data]);
+
+    useEffect(() => {
+      setData(_data);
+    }, [_data]);
+
+    return (
+      <this.wrapper data={data}>
+        <Head>
+          <title>{`${data.page.name} | ${data.info.name}`}</title>
+          <meta name="keywords" content={data.page.keywords}></meta>
+          <meta name="description" content={data.page.description}></meta>
+          <meta property="og:type" content="website" />
+          <meta property="og:image" content={``} />
+          <meta charSet="utf-8"></meta>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${data.info.analytics}`} />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+								window.dataLayer = window.dataLayer || [];
+								function gtag(){dataLayer.push(arguments);}
+								gtag('js', new Date());
+								gtag('config', '${data.info.analytics}', {
+								page_path: window.location.pathname,
+								});
+							`,
+            }}
+          />
+        </Head>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            width: '100vw',
+            height: '100%',
+            overflow: 'hidden',
+          }}
+        >
+          {data.page?.content && content}
+        </div>
+      </this.wrapper>
+    );
+  };
+
+  public getStaticPaths = async () => ({
+    paths: (await this.getPages()).map((page) => ({
+      params: {
+        slug: page.slug,
+      },
+    })),
+    fallback: 'blocking',
+  });
+
+  public getStaticProps = async (context: { params: { slug: any } }) => ({
+    props: await this.getPage(context.params.slug),
+  });
 }
