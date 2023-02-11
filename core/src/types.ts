@@ -29,7 +29,7 @@ export type Navbar = {
   socials: {
     icon: string;
     url: string;
-  };
+  }[];
 };
 
 export type Component = {
@@ -45,7 +45,7 @@ export type Component = {
 export type Page = {
   content: {
     [id: string]: Component;
-  }[];
+  };
   description: string;
   image: string;
   keywords: string;
@@ -58,5 +58,5 @@ export type ProjectData = {
   navbar: Navbar;
   pages: {
     [slug: string]: Page;
-  }[];
+  };
 };
