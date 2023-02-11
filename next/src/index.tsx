@@ -77,8 +77,6 @@ export default class Builder extends Project {
       setData(_data);
     }, [_data]);
 
-    console.log('data', data);
-
     return (
       <DataProvider data={data}>
         <Head>
@@ -102,7 +100,7 @@ export default class Builder extends Project {
             }}
           />
         </Head>
-        <this.wrapper data={data}>{data.page?.content && content}</this.wrapper>
+        <this.wrapper data={data}>{content}</this.wrapper>
       </DataProvider>
     );
   };
@@ -120,3 +118,6 @@ export default class Builder extends Project {
     props: await this.getPage(context.params.slug),
   });
 }
+
+export * from '@youjs/core';
+export * from '@youjs/react';
