@@ -1,6 +1,6 @@
 import { Project } from '@youjs/core';
 import { Page, ProjectData } from '@youjs/core/dist/types';
-import { renderComponent } from '@youjs/react';
+import { DataProvider, renderComponent } from '@youjs/react';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
@@ -13,7 +13,10 @@ export default class Builder extends Project {
   constructor(
     _clientId: string,
     _apiKey: string,
-    _wrapper: React.FunctionComponent<any> = ({ children }) => <div>{children}</div>,
+    _wrapper: React.FunctionComponent<{
+      data: ProjectData & { page: Page };
+      children: React.ReactNode;
+    }> = ({ children }) => <div>{children}</div>,
     _components: {
       [name: string]: React.FunctionComponent<any>;
     } = {},
@@ -28,15 +31,17 @@ export default class Builder extends Project {
     (this.components[name] = component);
 
   public getPage = (slug: string): Promise<ProjectData & { page: Page }> =>
-    this.getProject().then(async (project) => ({
-      ...project,
-      navbar: {
-        ...project.navbar,
-      },
-      page: {
-        ...project.pages[slug],
-      },
-    }));
+    this.getProject().then(async (project) => {
+      return {
+        ...project,
+        navbar: {
+          ...project.navbar,
+        },
+        page: {
+          ...project.pages[slug],
+        },
+      };
+    });
 
   public getPages = (): Promise<
     {
@@ -44,20 +49,21 @@ export default class Builder extends Project {
       slug: string;
     }[]
   > =>
-    this.getProject().then((project) =>
-      Object.values(project.pages).map((page: any) => ({
+    this.getProject().then((project) => {
+      return Object.values(project.pages ?? {}).map((page: any) => ({
         name: page.name,
         slug: page.slug,
-      })),
-    );
+      }));
+    });
 
   public page = (_data: ProjectData & { page: Page }) => {
     const [data, setData] = useState(_data);
     const [content, setContent] = useState<any>();
 
     useEffect(() => {
+      if (!data?.page?.content) return console.error('Page not found');
       Promise.all(
-        Object.values(data.page.content)
+        Object.values(data.page.content ?? {})
           ?.sort((a: any, b: any) => {
             console.log(a.index, b.index);
             // sort least to greatest by index
@@ -72,7 +78,7 @@ export default class Builder extends Project {
     }, [_data]);
 
     return (
-      <this.wrapper data={data}>
+      <DataProvider data={data}>
         <Head>
           <title>{`${data.page.name} | ${data.info.name}`}</title>
           <meta name="keywords" content={data.page.keywords}></meta>
@@ -94,20 +100,22 @@ export default class Builder extends Project {
             }}
           />
         </Head>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            width: '100vw',
-            height: '100%',
-            overflow: 'hidden',
-          }}
-        >
-          {data.page?.content && content}
-        </div>
-      </this.wrapper>
+        <this.wrapper data={data}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              width: '100vw',
+              height: '100%',
+              overflow: 'hidden',
+            }}
+          >
+            {content}
+          </div>
+        </this.wrapper>
+      </DataProvider>
     );
   };
 
@@ -117,7 +125,7 @@ export default class Builder extends Project {
         slug: page.slug,
       },
     })),
-    fallback: 'blocking',
+    fallback: false,
   });
 
   public getStaticProps = async (context: { params: { slug: any } }) => ({
