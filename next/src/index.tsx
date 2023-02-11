@@ -65,7 +65,6 @@ export default class Builder extends Project {
       Promise.all(
         Object.values(data.page.content ?? {})
           ?.sort((a: any, b: any) => {
-            console.log(a.index, b.index);
             // sort least to greatest by index
             return a.index - b.index;
           })
@@ -120,7 +119,7 @@ export default class Builder extends Project {
 
   public revalidate = async (req: any, res: any) => {
     return this.getProject().then((project) => {
-      return Promise.all(Object.keys(project.pages ?? {}).map(async (slug: string) => res.revalidate(slug)));
+      return Promise.all(Object.keys(project.pages ?? {}).map(async (slug: string) => res.revalidate(`/${slug}`)));
     });
   };
 }
