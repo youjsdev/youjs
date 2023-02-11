@@ -77,6 +77,8 @@ export default class Builder extends Project {
       setData(_data);
     }, [_data]);
 
+    console.log('data', data);
+
     return (
       <DataProvider data={data}>
         <Head>
@@ -100,21 +102,7 @@ export default class Builder extends Project {
             }}
           />
         </Head>
-        <this.wrapper data={data}>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              width: '100vw',
-              height: '100%',
-              overflow: 'hidden',
-            }}
-          >
-            {content}
-          </div>
-        </this.wrapper>
+        <this.wrapper data={data}>{data.page?.content && content}</this.wrapper>
       </DataProvider>
     );
   };
