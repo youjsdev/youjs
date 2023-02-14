@@ -1,7 +1,7 @@
 {
   "name": "@youjs/next",
   "private": false,
-  "version": "1.3.5",
+  "version": "1.4.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/youjsdev/youjs.git"
@@ -38,8 +38,8 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@youjs/core": "^1.2.0",
-    "@youjs/react": "^1.3.0",
+    "@youjs/core": "^1.4.1",
+    "@youjs/react": "^1.4.2",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

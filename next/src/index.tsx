@@ -59,6 +59,16 @@ export default class Builder extends Project {
   public page = (_data: ProjectData & { page: Page }) => {
     const [data, setData] = useState(_data);
     const [content, setContent] = useState<any>();
+    const [password, setPassword] = useState<string>('');
+
+    useEffect(() => {
+      console.log('password', data?.info.password);
+      console.log('useEffect', 'document.cookie', document?.cookie);
+
+      if (!document) return;
+
+      setPassword(getCookie('password') ?? '');
+    }, []);
 
     useEffect(() => {
       if (!data?.page?.content) return console.error('Page not found');
@@ -76,19 +86,107 @@ export default class Builder extends Project {
       setData(_data);
     }, [_data]);
 
-    return (
-      <DataProvider data={data}>
-        <Head>
-          <title>{`${data.page.name} | ${data.info.name}`}</title>
-          <meta name="keywords" content={data.page.keywords}></meta>
-          <meta name="description" content={data.page.description}></meta>
-          <meta property="og:type" content="website" />
-          <meta property="og:image" content={``} />
-          <meta charSet="utf-8"></meta>
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${data.info.analytics}`} />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
+    function getCookie(name: string) {
+      const nameEQ = name + '=';
+      const ca = document.cookie.split(';');
+      for (let c of ca) {
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    function setCookie(name: string, value: string, days: number) {
+      let expires = '';
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        expires = '; expires=' + date.toUTCString();
+      }
+      document.cookie = name + '=' + (value || '') + expires + '; path=/';
+    }
+
+    if (data?.info.password.enabled && password !== data?.info.password.password) {
+      return (
+        <div
+          style={{
+            width: '100vw',
+            height: '100vh',
+          }}
+        >
+          <style>
+            {`
+          .formContainer {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          form {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            border: 1px solid #000;
+            border-radius: 5px;
+          }
+          input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            margin-bottom: 10px;
+          }
+          button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            background-color: #000;
+            color: #fff;
+            cursor: pointer;
+          }
+        `}
+          </style>
+          <div className="formContainer">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+
+                const _password = prompt('Enter password') ?? getCookie('password') ?? '';
+
+                setCookie('password', _password, 1);
+
+                if (_password !== data?.info.password.password) {
+                  alert('Incorrect password');
+                } else {
+                  setPassword(_password);
+                }
+              }}
+            >
+              <p>
+                This site is password protected. Please enter the password to view the site. If you do not have the
+                password, please contact the site owner.
+              </p>
+              <button type="submit">Enter Password</button>
+            </form>
+          </div>
+        </div>
+      );
+    } else
+      return (
+        <DataProvider data={data}>
+          <Head>
+            <title>{`${data.page.name} | ${data.info.name}`}</title>
+            <meta name="keywords" content={data.page.keywords}></meta>
+            <meta name="description" content={data.page.description}></meta>
+            <meta property="og:type" content="website" />
+            <meta property="og:image" content={``} />
+            <meta charSet="utf-8"></meta>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${data.info.analytics}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
 								window.dataLayer = window.dataLayer || [];
 								function gtag(){dataLayer.push(arguments);}
 								gtag('js', new Date());
@@ -96,12 +194,12 @@ export default class Builder extends Project {
 								page_path: window.location.pathname,
 								});
 							`,
-            }}
-          />
-        </Head>
-        <this.wrapper data={data}>{content}</this.wrapper>
-      </DataProvider>
-    );
+              }}
+            />
+          </Head>
+          <this.wrapper data={data}>{content}</this.wrapper>
+        </DataProvider>
+      );
   };
 
   public getStaticPaths = async () => ({
