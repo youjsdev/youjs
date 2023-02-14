@@ -12,6 +12,10 @@ export type Info = {
   uptime_id: string;
   url: string;
   version: string;
+  password: {
+    enabled: boolean;
+    password: string;
+  };
 };
 
 export type Navbar = {
