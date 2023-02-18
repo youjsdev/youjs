@@ -4,7 +4,7 @@
 
 import { Project } from '../src/index';
 
-const project = new Project('FZO1S28apPcyNDgeydqqFRkzmG03', 'jnLPCkEigI1TmNbRW4a0');
+const project = new Project('FZO1S28apPcyNDgeydqqFRkzmG03', 'jnLPCkEigI1TmNbRW4a0', 'v1', 'http://localhost:3001/api');
 
 test('getProject', async () => {
   jest.setTimeout(10000);

@@ -7,7 +7,12 @@ export class Project {
   public endpoint: string;
   public version: string;
 
-  constructor(clientId: string, apiKey: string, version: string = 'v1', endpoint: string = 'https://youjs.dev/api') {
+  constructor(
+    clientId: string,
+    apiKey: string,
+    version: string = 'v1',
+    endpoint: string = 'https://www.youjs.dev/api',
+  ) {
     this._clientId = clientId;
     this._apiKey = apiKey;
 
@@ -22,6 +27,8 @@ export class Project {
   async getProject(): Promise<ProjectData> {
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `Bearer ${this._getBearerToken()}`);
+
+    console.log(`${this.endpoint}/${this.version}`, myHeaders);
 
     return fetch(`${this.endpoint}/${this.version}`, {
       method: 'GET',
