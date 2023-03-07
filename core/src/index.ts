@@ -28,8 +28,6 @@ export class Project {
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `Bearer ${this._getBearerToken()}`);
 
-    console.log(`${this.endpoint}/${this.version}`, myHeaders);
-
     return fetch(`${this.endpoint}/${this.version}`, {
       method: 'GET',
       headers: myHeaders,
