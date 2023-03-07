@@ -62,9 +62,6 @@ export default class Builder extends Project {
     const [password, setPassword] = useState<string>('');
 
     useEffect(() => {
-      console.log('password', data?.info.password);
-      console.log('useEffect', 'document.cookie', document?.cookie);
-
       if (!document) return;
 
       setPassword(getCookie('password') ?? '');
@@ -78,7 +75,10 @@ export default class Builder extends Project {
             // sort least to greatest by index
             return a.index - b.index;
           })
-          .map(async (element: any, index: number) => await renderComponent(element, this.components, index)),
+          .map(
+            async (element: any, index: number) =>
+              await renderComponent(element, this.components, data.info.theme, index),
+          ),
       ).then((content) => setContent(content));
     }, [data]);
 
