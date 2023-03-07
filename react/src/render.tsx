@@ -6,21 +6,25 @@ export const renderComponent = (
     children?: [];
   },
   knownElements: {
-    [key: string]: FunctionComponent;
+    [key: string]: FunctionComponent<{
+      theme: string;
+    }>;
   },
+  theme: string,
   key?: any,
 ): any => {
   if (element.__typename in knownElements) {
     return createElement(
       knownElements[element.__typename],
       {
+        theme,
         key,
         ...element,
       },
       element.children &&
         (typeof element.children === 'string'
           ? element.children
-          : element.children.map((child: any, key: number) => renderComponent(child, knownElements, key))),
+          : element.children.map((child: any, key: number) => renderComponent(child, knownElements, theme, key))),
     );
   } else
     return (
