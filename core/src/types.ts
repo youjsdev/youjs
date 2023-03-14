@@ -8,7 +8,10 @@ export type Info = {
   image: string;
   name: string;
   property: string;
-  theme: string;
+  theme: {
+    name: string;
+    scheme: string;
+  };
   uptime_id: string;
   url: string;
   version: string;
