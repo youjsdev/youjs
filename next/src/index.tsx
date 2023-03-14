@@ -106,7 +106,7 @@ export default class Builder extends Project {
       document.cookie = name + '=' + (value || '') + expires + '; path=/';
     }
 
-    if (data?.info.password.enabled && password !== data?.info.password.password) {
+    if (data?.info?.password?.enabled && password !== data?.info?.password?.password) {
       return (
         <div
           style={{
@@ -157,7 +157,7 @@ export default class Builder extends Project {
 
                 setCookie('password', _password, 1);
 
-                if (_password !== data?.info.password.password) {
+                if (_password !== data?.info?.password?.password) {
                   alert('Incorrect password');
                 } else {
                   setPassword(_password);
