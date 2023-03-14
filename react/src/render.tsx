@@ -7,10 +7,16 @@ export const renderComponent = (
   },
   knownElements: {
     [key: string]: FunctionComponent<{
-      theme: string;
+      theme: {
+        name: string;
+        scheme: string;
+      };
     }>;
   },
-  theme: string,
+  theme: {
+    name: string;
+    scheme: string;
+  },
   key?: any,
 ): any => {
   if (element.__typename in knownElements) {
