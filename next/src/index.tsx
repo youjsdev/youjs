@@ -2,6 +2,7 @@ import { Project } from '@youjs/core';
 import { Page, ProjectData } from '@youjs/core/dist/types';
 import { DataProvider, renderComponent } from '@youjs/react';
 import Head from 'next/head';
+import Script from "next/script";
 import { useEffect, useState } from 'react';
 
 export default class Builder extends Project {
@@ -183,8 +184,8 @@ export default class Builder extends Project {
             <meta property="og:type" content="website" />
             <meta property="og:image" content={``} />
             <meta charSet="utf-8"></meta>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${data.info.analytics}`} />
-            <script
+            <Script async src={`https://www.googletagmanager.com/gtag/js?id=${data.info.analytics}`} />
+            <Script
               dangerouslySetInnerHTML={{
                 __html: `
 								window.dataLayer = window.dataLayer || [];
