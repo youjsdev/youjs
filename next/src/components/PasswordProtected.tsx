@@ -49,7 +49,6 @@ const PasswordProtected = ({ password, scheme, color }: { password: string; sche
   }
 
   const handleSubmit = (e: any) => {
-    console.log(e);
     e.preventDefault();
 
     setCookie('password', e.target.password.value, 1);
