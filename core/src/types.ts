@@ -11,6 +11,7 @@ export type Info = {
   theme: {
     name: string;
     scheme: string;
+    color: string;
   };
   uptime_id: string;
   url: string;
