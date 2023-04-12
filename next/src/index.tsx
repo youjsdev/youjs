@@ -88,7 +88,9 @@ export default class Builder extends Project {
 							`,
           }}
         />
-        <PasswordProtected {..._data.info.password} />
+        {_data.info.password.enabled && (
+          <PasswordProtected password={_data.info.password.password} {..._data.info.theme} />
+        )}
         <this.wrapper data={_data}>{content}</this.wrapper>
       </DataProvider>
     );
@@ -103,9 +105,18 @@ export default class Builder extends Project {
     fallback: false,
   });
 
-  public getStaticProps = async (context: { params: { slug: any } }) => ({
-    props: await this.getPage(context.params.slug),
-  });
+  public getStaticProps = async (context: { params: { slug: any } }) => {
+    const props = await this.getPage(context.params.slug);
+
+    if (!props.page)
+      return {
+        notFound: true,
+      };
+
+    return {
+      props,
+    };
+  };
 
   public revalidate = async (req: any, res: any) => {
     const project = await this.getProject();
