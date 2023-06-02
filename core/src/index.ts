@@ -34,3 +34,5 @@ export class Project {
     }).then((response) => response.json());
   }
 }
+
+export * from './types';
