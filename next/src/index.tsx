@@ -59,37 +59,37 @@ export default class Builder extends Project {
     });
 
   public page = (_data: ProjectData & { page: Page }) => {
-    const content = Object.values(_data.page.content ?? {})
+    const content = Object.values(_data?.page?.content ?? {})
       ?.sort((a: any, b: any) => {
         return a.index - b.index;
       })
-      .map((element: any, index: number) => renderComponent(element, this.components, _data.info.theme, index));
+      .map((element: any, index: number) => renderComponent(element, this.components, _data?.info?.theme, index));
 
     return (
       <DataProvider data={_data}>
         <Head>
-          <title>{`${_data.page.name} | ${_data.info.name}`}</title>
-          <meta name="keywords" content={_data.page.keywords}></meta>
-          <meta name="description" content={_data.page.description}></meta>
+          <title>{`${_data.page.name} | ${_data?.info?.name}`}</title>
+          <meta name="keywords" content={_data?.page?.keywords}></meta>
+          <meta name="description" content={_data?.page?.description}></meta>
           <meta property="og:type" content="website" />
           <meta property="og:image" content={``} />
           <meta charSet="utf-8"></meta>
         </Head>
-        <Script async src={`https://www.googletagmanager.com/gtag/js?id=${_data.info.analytics}`} />
+        <Script async src={`https://www.googletagmanager.com/gtag/js?id=${_data?.info?.analytics}`} />
         <Script
           dangerouslySetInnerHTML={{
             __html: `
 								window.dataLayer = window.dataLayer || [];
 								function gtag(){dataLayer.push(arguments);}
 								gtag('js', new Date());
-								gtag('config', '${_data.info.analytics}', {
+								gtag('config', '${_data?.info?.analytics}', {
 								page_path: window.location.pathname,
 								});
 							`,
           }}
         />
-        {_data.info.password.enabled && (
-          <PasswordProtected password={_data.info.password.password} {..._data.info.theme} />
+        {_data?.info?.password?.enabled && (
+          <PasswordProtected password={_data?.info?.password?.password} {..._data?.info?.theme} />
         )}
         <this.wrapper data={_data}>{content}</this.wrapper>
       </DataProvider>
