@@ -35,4 +35,4 @@ export class Project {
   }
 }
 
-export * from './types';
+export type { ProjectData } from './types';
