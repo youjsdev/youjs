@@ -53,8 +53,8 @@ export default class Builder extends Project {
   > =>
     this.getProject().then((project) => {
       return Object.values(project.pages ?? {}).map((page: any) => ({
-        name: page.name,
-        slug: page.slug,
+        name: page?.name,
+        slug: page?.slug,
       }));
     });
 
@@ -68,7 +68,7 @@ export default class Builder extends Project {
     return (
       <DataProvider data={_data}>
         <Head>
-          <title>{`${_data.page.name} | ${_data?.info?.name}`}</title>
+          <title>{`${_data?.page?.name} | ${_data?.info?.name}`}</title>
           <meta name="keywords" content={_data?.page?.keywords}></meta>
           <meta name="description" content={_data?.page?.description}></meta>
           <meta property="og:type" content="website" />
