@@ -91,7 +91,7 @@ export default class Builder extends Project {
         {_data?.info?.password?.enabled && (
           <PasswordProtected password={_data?.info?.password?.password} {..._data?.info?.theme} />
         )}
-        {content && <this.wrapper data={_data}>{content}</this.wrapper>}
+        {_data?.page && content && <this.wrapper data={_data}>{content}</this.wrapper>}
       </DataProvider>
     );
   };
